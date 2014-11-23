@@ -1,7 +1,5 @@
 # MOTIVOTE - ULTIMATE VOTE REWARD SCRIPT #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
 ### How do I get set up? ###
 
 * Download latest version of Motivote (you probably already have, since you're reading this!)
