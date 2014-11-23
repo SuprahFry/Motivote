@@ -1,7 +1,7 @@
 					<div id="content">
 						<div class="informationlight">When creating themes, or customizing the default theme, please clone the original theme into a new, uniquely named directory to avoid being overridden when you update Motivote.</div>
 						<div class="datagrid" style="max-width: 500px; display: inline-block;">
-							<form action="edit.php?action=update&target=settings" method="post">
+							<form action="edit.php?action=update&target=settings" method="get">
 								<table>
 									<thead>
 										<tr>
@@ -15,10 +15,14 @@
 												<select name="value">
 												<?php
 												$files = glob("../templates/*", GLOB_BRACE);
+												print_r($files);
 												
 												foreach ($files as $file) {
 													$f = pathinfo($file, PATHINFO_BASENAME);
-													echo('<option value="'.$f.'" '.(mv_setting('selected_theme') == $f ? 'selected' : '').'>'.$f.'</option>');
+													
+													if ($f != 'index.html') {
+														echo('<option value="'.$f.'" '.(mv_setting('selected_theme') == $f ? 'selected' : '').'>'.$f.'</option>');
+													}
 												}
 												?>
 												</select>

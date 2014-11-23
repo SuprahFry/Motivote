@@ -120,7 +120,7 @@ if (isset($_GET['action'])) {
 				
 				$mvdb->escapedQuery("INSERT INTO `".DBPRE."incentives`
 										(`name`, `amount`, `image`, `active`)
-									VALUES ('%1s', %2:d, '%3:s', %4:d,)",
+									VALUES ('%1s', %2:d, '%3:s', %4:d)",
 										$_POST['name'], intval($_POST['amount']), $_POST['image'], $active);
 				echo('Insert successful!');
 			}
