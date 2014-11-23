@@ -1,0 +1,153 @@
+.home, .bar, .gear, .tool, .finance, .database,
+	.firewall, .monitor, .support, .admin, .user
+{
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
+.disk, .copy, .table-replace
+{	
+	background-size: 20px 20px;
+	background-repeat: no-repeat;
+	background-position: 6px center;
+}
+
+.disk
+{
+	background-image: url('../images/disk.png');
+}
+
+.disk:hover
+{
+	background-image: url('../images/disk_hover.png');
+}
+
+.table-replace
+{
+	background-image: url('../images/table_replace.png');
+}
+
+.table-replace:hover
+{
+	background-image: url('../images/table_replace_hover.png');
+}
+
+.copy
+{
+	background-image: url('../images/copy.png');
+}
+
+.copy:hover
+{
+	background-image: url('../images/copy_hover.png');
+}
+
+.home
+{
+	background-image: url('../images/home.png');
+}
+
+.current a.home, .home:hover
+{
+	background-image: url('../images/home_hover.png');
+}
+
+.bar
+{
+	background-image: url('../images/bar.png');
+}
+
+.current a.bar, .bar:hover
+{
+	background-image: url('../images/bar_hover.png');
+}
+
+.gear
+{
+	background-image: url('../images/gear.png');
+}
+
+.current a.gear, .gear:hover
+{
+	background-image: url('../images/gear_hover.png');
+}
+
+.tool
+{
+	background-image: url('../images/tool.png');
+}
+
+.current a.tool, .tool:hover
+{
+	background-image: url('../images/tool_hover.png');
+}
+
+.database
+{
+	background-image: url('../images/database.png');
+}
+
+.current a.database, .database:hover
+{
+	background-image: url('../images/database_hover.png');
+}
+
+.finance
+{
+	background-image: url('../images/finance.png');
+}
+
+.current a.finance, .finance:hover
+{
+	background-image: url('../images/finance_hover.png');
+}
+
+.firewall
+{
+	background-image: url('../images/firewall.png');
+}
+
+.current a.firewall, .firewall:hover
+{
+	background-image: url('../images/firewall_hover.png');
+}
+
+.monitor
+{
+	background-image: url('../images/system_monitor.png');
+}
+
+.current a.monitor, .monitor:hover
+{
+	background-image: url('../images/system_monitor_hover.png');
+}
+
+.support
+{
+	background-image: url('../images/support.png');
+}
+
+.current a.support, .support:hover
+{
+	background-image: url('../images/support_hover.png');
+}
+
+.user
+{
+	background-image: url('../images/user.png');
+}
+
+.current a.user, .user:hover
+{
+	background-image: url('../images/user_hover.png');
+}
+
+.admin
+{
+	background-image: url('../images/administrator.png');
+}
+
+.current a.admin, .admin:hover
+{
+	background-image: url('../images/administrator_hover.png');
+}
