@@ -12,3 +12,5 @@
 
 * Contact zomgtehfly on Skype and I'll be glad to try and get you up and running.
 * Please report all bugs you may find to me ASAP so I can fix them.
+
+http://rspserver.com/motivote
