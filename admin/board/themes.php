@@ -15,7 +15,7 @@
 												<select name="value">
 												<?php
 												$files = glob("../templates/*", GLOB_BRACE);
-												print_r($files);
+												//print_r($files);
 												
 												foreach ($files as $file) {
 													$f = pathinfo($file, PATHINFO_BASENAME);
