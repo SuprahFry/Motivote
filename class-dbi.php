@@ -96,6 +96,11 @@ class Database
 		}
 		
 		$_result = mysqli_fetch_array($_query, $result_type);
+		
+		while (mysqli_next_result($this->_link)) {
+		  if (!mysqli_more_results($this->_link)) break;
+		}
+		
 		@mysqli_free_result($_query);
 		return $_result;
 	}
@@ -140,6 +145,10 @@ class Database
 			$results[] = $result;
 		}
 		
+		while (mysqli_next_result($this->_link)) {
+		  if (!mysqli_more_results($this->_link)) break;
+		}
+		
 		@mysqli_free_result($_query);
 		return $results;
 	}
@@ -153,6 +162,14 @@ class Database
 		return mysqli_insert_id($this->_link);
 	}
 	
+	public function sanitize(&$in) {
+		foreach ($in as $k => $v) {
+			$in[$k] = $this->_link->real_escape_string($v);
+		}
+		
+		return $in;
+	}
+	
 	public function escapedQuery($query)
 	{
 		$valueCount = func_num_args();
@@ -161,10 +178,10 @@ class Database
 		{
 			$args = func_get_args(); // because the first parameter is the query
 			unset($args[0]);
-			$query = vsprintf(preg_replace('/%([0-9]+):(d|s)/', '%$1$$2', $query), array_map('mysql_escape_string', $args));
+			$query = vsprintf(preg_replace('/%([0-9]+):(d|s)/', '%$1$$2', $query), $this->sanitize($args));
 		}
 		
-		//echo($query);
+		echo($query);
 		return mysqli_query($this->_link, $query);
 	}
 
@@ -177,7 +194,7 @@ class Database
 		{
 			$args = func_get_args(); // because the first parameter is the query
 			unset($args[0]);
-			$query = vsprintf(preg_replace('/%([1-9]):(d|s)/', '%$1$$2', $query), array_map('mysql_escape_string', $args));
+			$query = vsprintf(preg_replace('/%([1-9]):(d|s)/', '%$1$$2', $query), $this->sanitize($args));
 		}
 		
 		//echo($query);

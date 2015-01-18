@@ -95,12 +95,13 @@
 					insert = '<div class="failure">New version available! Latest version: ' + version + '. <a href="http://rspserver.com/motivote">Click here to get the latest version</a></div>';
 				}
 				else {
-					insert = '<div class="informationlight">You have the latest version: ' + version + '</div>';
+					//insert = '<div class="informationlight">You have the latest version: ' + version + '</div>';
 				}
 				
 				if (insert != '') {
 					$('#versionnotice').html(insert);
 				}
+				$('.vers').text(version);
 			}
 			
 			function getCurrentVersion() {

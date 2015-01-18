@@ -13,11 +13,26 @@ if (isset($_GET['action'])) {
 	
 	if ($action == 'update') {
 		if ($type == 'settings') {
-			$mvdb->escapedQuery("UPDATE `".DBPRE."preferences` SET `value` = '%1:s' WHERE `name` = '%2:s'", $_GET['value'], $_GET['name']);
+			//var_dump($_POST);
+			
+			foreach ($_POST as $k => $v) {
+				$set = mv_setting_full($k);
+				
+				if ($set['values'] == 'md5') {
+					if (empty($v)) {
+						continue;
+					}
+					
+					$v = md5($v);
+				}
+				
+				mv_update_setting($k, $v);
+			}
+			
 			echo('Update successful!');
 		}
 		else if ($type == 'phrases') {
-			$mvdb->escapedQuery("UPDATE `".DBPRE."phrases` SET `value` = '%1:s' WHERE `name` = '%2:s'", $_GET['value'], $_GET['name']);
+			mv_update_phrase($_GET['name'], $_GET['value']);
 			echo('Update successful!');
 		}
 		else if ($type == 'sites') {
@@ -28,33 +43,12 @@ if (isset($_GET['action'])) {
 			}
 			
 			if (intval($_POST['id']) != 1) {
-				$mvdb->escapedQuery("UPDATE `".DBPRE."sites`
-										SET `name` = '%1:s',
-											`voteurl` = '%2:s',
-											`voteurlid` = '%3:s',
-											`waittime` = %4:d,
-											`active` = %5:d
-										WHERE `id` = %6:d",
-											$_POST['name'],
-											$_POST['voteurl'],
-											$_POST['voteurlid'],
-											intval($_POST['waittime']),
-											$active,
-											intval($_POST['id']));
+				mv_update_site($_POST['id'], $_POST['name'], $_POST['voteurl'], $_POST['voteurlid'], $_POST['waittime'], $active);
 				echo('Update successful!');
 			}
 			else {
 				if (strpos($_POST['voteurl'], 'rspserver.com') !== false) {
-					$mvdb->escapedQuery("UPDATE `".DBPRE."sites`
-											SET `voteurl` = '%1:s',
-												`voteurlid` = '%2:s',
-												`waittime` = %3:d,
-												`active` = true
-											WHERE `id` = %4:d",
-												$_POST['voteurl'],
-												$_POST['voteurlid'],
-												intval($_POST['waittime']),
-												intval($_POST['id']));
+					mv_update_site2($_POST['id'], $_POST['voteurl'], $_POST['voteurlid'], $_POST['waittime']);
 					echo('Update required site successful!');
 				}
 				else {

@@ -462,7 +462,7 @@ a:hover {
   font-size: 11px;
 }
 /* line 359, ../sass/screen.scss */
-#main #content-container .datagrid table tfoot td a {
+#main #content-container .datagrid table tfoot td a, #main #content-container .datagrid table tfoot td .subcontainer {
   margin: 3px;
   text-decoration: none;
   display: inline-block;
@@ -474,12 +474,22 @@ a:hover {
 #main #content-container .datagrid table tfoot td a span {
   display: block;
   padding: 0 8px;
+  color: #F5F5F5;
+}
+#main #content-container .datagrid table tfoot td input  {
+  border: 0;
+  padding: 0 8px;
+  color: #F5F5F5;
+  background-color: rgba(255, 255, 255, 0.0);
+  font-size: 11px;
+  height: 18px;
 }
 /* line 371, ../sass/screen.scss */
-#main #content-container .datagrid table tfoot td a span:hover {
+#main #content-container .datagrid table tfoot td a span:hover, #main #content-container .datagrid table tfoot td input:hover {
   text-decoration: none;
   border-color: #7D7D7D;
   color: #F5F5F5;
+  cursor: pointer;
   background-color: rgba(255, 255, 255, 0.2);
 }
 /* line 391, ../sass/screen.scss */

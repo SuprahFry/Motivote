@@ -3,8 +3,8 @@ $rewardvotes = mv_reward_votes();
 $rewardentry = mv_reward();
 $incentives = mv_incentives();
 
-if ($rewardentry === false || $rewardentry === null) {
-	if (count($rewardvotes) >= mv_active_site_count()) {
+if (!empty($rewardentry)) {
+	if (count($rewardvotes) >= mv_site_count()) {
 		$_SESSION['step'] = 3;
 		
 		$mvdb->escapedQuery("INSERT INTO `".DBPRE."rewards`

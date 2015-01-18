@@ -14,12 +14,8 @@ if (empty($_GET['key']) || mv_setting('datakey') != $_GET['key']) {
 
 if (empty($out['error'])) {
 	if ($_GET['do'] == 'pending') {
-		$out['votes'] = $mvdb->escapedAllResultsAssoc("SELECT `id`, `site`, `user`, `ip` FROM `".DBPRE."votes` WHERE `ready` = 1 AND `fulfilled` = 0");
-		$out['rewards'] = $mvdb->escapedAllResultsAssoc("SELECT `r`.`id`, `r`.`incentive`, `r`.`user`, `r`.`ip`, `i`.`name`, `i`.`amount` FROM `".DBPRE."rewards` `r`
-														INNER JOIN
-															(SELECT * FROM `".DBPRE."incentives`) `i`
-															ON `r`.`incentive` = `i`.`id`
-														WHERE `ready` = 1 AND `fulfilled` = 0");
+		$out['votes'] = mv_pending_votes();
+		$out['rewards'] = mv_pending_rewards();
 		$out['tactic'] = mv_setting('incentive_tactic');
 		$out['reward'] = $out['tactic'] == 'reward';
 	}
@@ -29,12 +25,12 @@ if (empty($out['error'])) {
 		
 		if ($type == 'rewards') {
 			foreach ($ids as $id) {
-				$mvdb->escapedQuery("UPDATE `".DBPRE."rewards` SET `fulfilled` = '1' WHERE `id` = %1:d", intval($id));
+				mv_finalize_reward(intval($id));
 			}
 		}
 		else {
 			foreach ($ids as $id) {
-				$mvdb->escapedQuery("UPDATE `".DBPRE."votes` SET `fulfilled` = '1' WHERE `id` = %1:d", intval($id));
+				mv_finalize_vote(intval($id));
 			}
 		}
 		

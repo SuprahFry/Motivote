@@ -4,12 +4,11 @@ if (isset($_GET['username']) && $_SESSION['step'] == 1) {
 }
 
 $_SESSION['step'] = 2;
-$step3 = mv_setting('incentive_tactic') == 'reward';
 ?>
 <p>Voting as user "<strong><span class="user"><?php echo($_SESSION['user']); ?></span></strong>"</p>
 <ul>
 	<?php
-	$sites = $mvdb->escapedAllResultsAssoc("SELECT * FROM `".DBPRE."sites` WHERE `active` = 1 OR `id` = 1");
+	$sites = mv_vote_sites();
 	//print_r($sites);
 	
 	foreach ($sites as $site) {
@@ -22,7 +21,7 @@ $step3 = mv_setting('incentive_tactic') == 'reward';
 	
 	$(function() {
 		<?php
-		if (!$step3) {
+		if (!$mvrewardtac) {
 			echo("$('#continue').hide();");
 		}
 		?>
@@ -37,6 +36,11 @@ $step3 = mv_setting('incentive_tactic') == 'reward';
 			(function countCheck() {
 				$('#loadimg').show();
 				$.getJSON('index.php?ajax=times', function(data) {
+					if (data == 'Session invalid.') {
+						window.location = 'index.php';
+						return;
+					}
+					
 					if (workStill)
 					{
 						for (var i = 0; i < data.length; i++) {
@@ -52,6 +56,10 @@ $step3 = mv_setting('incentive_tactic') == 'reward';
 				$.ajax({
 					url: 'index.php?ajax=step3continue', 
 					success: function(data) {
+						if (data == 'Session invalid.') {
+							window.location = 'index.php';
+							return;
+						}
 						if (workStill) {
 							if (data == '0') {
 								if ($('#continue').hasClass('disabled')) {
@@ -81,7 +89,7 @@ $step3 = mv_setting('incentive_tactic') == 'reward';
 					running = false;
 				}
 			})();
-			<?php if ($step3): ?>
+			<?php if ($mvrewardtac): ?>
 			(function worker() {
 				if (workStill) {
 					//$('#continue').text('Checking');
@@ -122,7 +130,7 @@ $step3 = mv_setting('incentive_tactic') == 'reward';
 			$(this).off();
 			var step3 = false;
 			
-			<?php if ($step3): ?>
+			<?php if ($mvrewardtac): ?>
 			step3 = true;
 			<?php endif; ?>
 			

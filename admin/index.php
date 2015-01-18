@@ -4,7 +4,7 @@ require('../init.php');
 
 $board = null;
 $baseboard = 'board/';
-$validboards = array('dashboard', 'settings', 'incentives', 'phrases', 'sites', 'system', 'themes');
+$validboards = array('dashboard', 'settings', 'incentives', 'phrases', 'sites', 'system', 'themes', 'emulate');
 
 if (isset($_GET['board'])) {
 	$board = realpath($baseboard.$_GET['board'].'.php');
@@ -14,10 +14,10 @@ if (isset($_GET['board'])) {
 		die('The requested file could not be found');
 	}
 	
-	if (strpos($board, $baseboard) === false) {
+	/*if (strpos($board, $baseboard) === false) {
 		header('HTTP/1.1 404 Not Found');
 		die('The requested file could not be found');
-	}
+	}*/
 }
 
 if (!isset($_SESSION['admin']) || $_SESSION['admin'] != $mvadminpass || (isset($_GET['do']) && $_GET['do'] == 'logout')) {

@@ -7,17 +7,23 @@
 							<table>
 								<thead>
 									<tr>
-										<th colspan="2">Important Information</th>
+										<th colspan="4">Important Information</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
-										<td>Vote URL</td>
-										<td><input type="text" style="display: block;width: 100%" value="<?php echo('http://'.$_SERVER["SERVER_NAME"].BASE_DIR.'/'); ?>" /></td>
+										<td colspan="2">Vote URL</td>
+										<td colspan="2"><input type="text" style="display: block;width: 100%" value="<?php echo('http://'.$_SERVER["SERVER_NAME"].BASE_DIR.'/'); ?>" /></td>
 									</tr>
 									<tr class="alt">
-										<td>Callback URL</td>
-										<td><input type="text" style="display: block;width: 100%" value="<?php echo('http://'.$_SERVER["SERVER_NAME"].BASE_DIR.'/callback.php?i='); ?>" /></td>
+										<td colspan="2">Callback URL</td>
+										<td colspan="2"><input type="text" style="display: block;width: 100%" value="<?php echo('http://'.$_SERVER["SERVER_NAME"].BASE_DIR.'/callback.php?i='); ?>" /></td>
+									</tr>
+									<tr>
+										<td>Curent Version</td>
+										<td style="text-align: center;" class="vers"></td>
+										<td>Installed Version</td>
+										<td style="text-align: center;"><?php echo(MVERNUM); ?></td>
 									</tr>
 								</tbody>
 							</table>

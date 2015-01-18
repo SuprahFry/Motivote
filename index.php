@@ -13,27 +13,37 @@ if (isset($_GET['ajax'])) {
 	$path = realpath($mvthemedir.'/'.$_GET['ajax'].'.php');
 	
 	if ($_GET['ajax'] == 'times' && isset($_SESSION['user'])) {
+		if (empty($_SESSION['user'])) {
+			die('Session invalid.');
+		}
+		
 		echo(json_encode(mv_vote_times()));
 	}
 	else if ($_GET['ajax'] == 'step3continue' && isset($_SESSION['user'])) {
+		if (empty($_SESSION['user'])) {
+			die('Session invalid.');
+		}
+		
 		$rewardvotes = mv_reward_votes();
 		$rewardentry = mv_reward();
+		//var_dump($rewardentry);
 		
-		if ($rewardentry === null || $rewardentry === false) {
-			echo(mv_active_site_count() - count($rewardvotes));
+		if (!empty($rewardentry)) {
+			echo(mv_site_count() - count($rewardvotes));
 		}
 		else {
 			echo(0);
 		}
 	}
 	else if ($path !== false) {
-		if (strpos($path, $mvthemedir.'/') !== false) {
+		require($path);
+		/*if (strpos($path, $mvthemedir.'/') !== false) {
 			require($path);
 		}
 		else {
 			header('HTTP/1.1 404 Not Found');
 			echo('The requested file could not be found');
-		}
+		}*/
 	}
 	
 	die();

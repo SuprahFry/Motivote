@@ -1,37 +1,6 @@
 					<div id="content">
-						<!--<div class="datagrid">
-							<table>
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Name</th>
-										<th>Site ID</th>
-										<th>Wait Time</th>
-										<th>Active</th>
-									</tr>
-								</thead>
-								<tbody>
-									<?php
-									$alt = false;
-									
-									foreach ($results as $result) {
-									?>
-									<tr class="<?php echo($alt ? 'alt' : ''); ?>">
-										<td><?php echo($result['id']); ?></td>
-										<td><?php echo($result['name']); ?></td>
-										<td><?php echo($result['voteurlid']); ?></td>
-										<td><?php echo($result['waittime']); ?>h</td>
-										<td><?php echo($result['active']); ?></td>
-									</tr>
-									<?php
-										$alt = !$alt;
-									}
-									?>
-								</tbody>
-							</table>
-						</div>-->
 						<?php
-						$results = $mvdb->escapedAllResultsAssoc("SELECT * FROM `".DBPRE."sites`");
+						$results = mv_sites();
 						$alt = false;
 						
 						foreach ($results as $result) {

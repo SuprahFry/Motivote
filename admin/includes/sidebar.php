@@ -19,6 +19,9 @@
 							<li>
 								<a class="admin" href="#phrases">Phrases</a>
 							</li>
+							<li>
+								<a class="support" href="#emulate">Vote Tester</a>
+							</li>
 						</ul>
 					</div>
 				</div>

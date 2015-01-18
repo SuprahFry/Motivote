@@ -28,14 +28,15 @@ if (count($_GET) > 0) {
 			die('Invalid hash.');
 		}
 		
-		print_r($auth);
-		$mvdb->escapedQuery("UPDATE `".DBPRE."votes` SET
-										`callbackdate` = UTC_TIMESTAMP(),
-										`ready` = true,
-										`callbackip` = '%1:s',
-										`callbackdata` = '%2:s'
-									WHERE `id` = %3:d AND `ready` != true",
-								$_SERVER['REMOTE_ADDR'], json_encode($_GET).json_encode($_POST), intval($auth['id']));
+		//print_r($auth);
+		$res = mv_update_vote(intval($auth['id']), $_SERVER['REMOTE_ADDR'], json_encode($_GET).json_encode($_POST));
+		
+		if (!$res) {
+			echo('Fail. Query issue.');
+		}
+		else {
+			echo('Success!');
+		}
 	}
 	else {
 		echo('Invalid callback.');
