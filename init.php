@@ -77,14 +77,33 @@ $prep['insreward'] = $db->prepare('INSERT INTO `'.DBPRE.'rewards`
 								VALUES (:name, :ip, UTC_TIMESTAMP(), false, false, null)');
 $prep['fulvote'] = $db->prepare('UPDATE `'.DBPRE.'votes` SET `fulfilled` = 1 WHERE `id` = :id');
 $prep['upreward'] = $db->prepare('UPDATE `'.DBPRE.'rewards` SET `ready` = 1, `incentive` = :incentive WHERE `id` = :id');
+$prep['updinc'] = $db->prepare('UPDATE `'.DBPRE.'incentives`
+									SET `name` = :name,
+										`amount` = :amount,
+										`image` = :image,
+										`active` = :active
+									WHERE `id` = :id');
+$prep['inssite'] = $db->prepare('INSERT INTO `'.DBPRE.'sites`
+										(`name`, `voteurl`, `voteurlid`, `waittime`, `active`)
+									VALUES (:name, :voteurl, :voteurlid, :waittime, :active)');
+$prep['insinc'] = $db->prepare('INSERT INTO `'.DBPRE.'incentives`
+										(`name`, `amount`, `image`, `active`)
+									VALUES (:name, :amount, :image, :active)');
+$prep['delsite'] = $db->prepare('DELETE FROM `'.DBPRE.'sites` WHERE `id` = :id');
+$prep['delinc'] = $db->prepare('DELETE FROM `'.DBPRE.'incentives` WHERE `id` = :id');
+$prep['inscaldata'] = $db->prepare('INSERT INTO `'.DBPRE.'callbacks`
+											(`id`, `voteid`, `getdata`, `postdata`,
+												`headers`, `auth`, `ip`, `date`)
+									VALUES (null, :voteid, :getdata, :postdata,
+												:headers, :auth, :ip, CURRENT_TIMESTAMP)');
 
 if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
 	// people can fake the header, but it's pointless, so let's just accept it
 	$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
 }
 
-require('class-dbi.php');
-$mvdb = new Database($mvdbuser, $mvdbpass, $mvdbhost, $mvdb);
+/*require('class-dbi.php');
+$mvdb = new Database($mvdbuser, $mvdbpass, $mvdbhost, $mvdb);*/
 $mvsetcache = array();
 $mvphrcache = array();
 
@@ -99,9 +118,40 @@ function prep($name) {
 	return $prep[$name];
 }
 
+function mv_insert_cbdata($voteid, $getdata, $postdata, $headers, $auth, $ip) {
+	$r = prep('inscaldata');
+	return $r->execute(array(':voteid' => $voteid, ':getdata' => $getdata, ':postdata' => $postdata,
+								':headers' => $headers, ':auth' => $auth, ':ip' => $ip));
+}
+
+function mv_delete_incentive($id) {
+	$r = prep('delinc');
+	return $r->execute(array(':id' => $id));
+}
+
+function mv_delete_site($id) {
+	$r = prep('delsite');
+	return $r->execute(array(':id' => $id));
+}
+
+function mv_insert_site($name, $voteurl, $voteurlid, $waittime, $active) {
+	$r = prep('inssite');
+	return $r->execute(array(':name' => $name, ':voteurl' => $voteurl, ':voteurlid' => $voteurlid, ':waittime' => $waittime, ':active' => $active));
+}
+
+function mv_insert_incentive($name, $amount, $image, $active) {
+	$r = prep('insinc');
+	return $r->execute(array(':name' => $name, ':amount' => $amount, ':image' => $image, ':active' => $active));
+}
+
+function mv_update_incentive($name, $amount, $image, $active, $id) {
+	$r = prep('updinc');
+	return $r->execute(array(':name' => $name, ':amount' => $amount, ':image' => $image, ':active' => $active, ':id' => $id));
+}
+
 function mv_unique_callbacks() {
 	global $db;
-	$r = $db->query('SELECT `callbackip`, COUNT(*) FROM `'.DBPRE.'votes` GROUP BY `callbackip` ORDER BY COUNT(*) DESC');
+	$r = $db->query('SELECT `callbackip`, COUNT(*) FROM `'.DBPRE.'votes` WHERE `callbackip` != \'\' GROUP BY `callbackip` ORDER BY COUNT(*) DESC');
 	return $r->fetchAll();
 }
 
@@ -227,7 +277,7 @@ function mv_vote_times() {
 }
 
 function mv_phrase($name) {
-	global $mvdb, $mvphrcache;
+	global $mvphrcache;
 	$valueCount = func_num_args();
 	$arguments = array();
 	
@@ -292,7 +342,7 @@ function mv_sites() {
 }
 
 function mv_setting($name) {
-	global $mvdb, $mvsetcache;
+	global $mvsetcache;
 	
 	if (array_key_exists($name, $mvsetcache) && !empty($mvsetcache[$name])) {
 		return $mvsetcache[$name];

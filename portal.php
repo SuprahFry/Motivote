@@ -24,11 +24,6 @@ if (isset($_GET['site'])) {
 	else {
 		$insert = mv_insert_vote($site['id'], $user);
 		//var_dump($insert);
-		/*$mvdb->escapedQuery("INSERT INTO `".DBPRE."votes`
-									(`site`, `user`, `ip`, `opendate`, `callbackdate`, `ready`, `fulfilled`)
-									VALUES (%1:d, '%2:s', '%3:s', UTC_TIMESTAMP(), null, false, false)",
-									$site['id'], $user, $_SERVER['REMOTE_ADDR']);
-		$insert = $mvdb->lastInsertID();*/
 	}
 	
 	//print_r($res);

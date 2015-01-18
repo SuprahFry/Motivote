@@ -63,17 +63,7 @@ if (isset($_GET['action'])) {
 				$active = true;
 			}
 			
-			$mvdb->escapedQuery("UPDATE `".DBPRE."incentives`
-									SET `name` = '%1:s',
-										`amount` = %2:d,
-										`image` = '%3:s',
-										`active` = %4:d
-									WHERE `id` = %5:d",
-										$_POST['name'],
-										intval($_POST['amount']),
-										$_POST['image'],
-										$active,
-										intval($_POST['id']));
+			mv_update_incentive($_POST['name'], $_POST['amount'], $_POST['image'], $active, $_POST['id']);
 			echo('Update successful!');
 		}
 		else {
@@ -94,10 +84,7 @@ if (isset($_GET['action'])) {
 					$active = true;
 				}
 				
-				$mvdb->escapedQuery("INSERT INTO `".DBPRE."sites`
-										(`name`, `voteurl`, `voteurlid`, `waittime`, `active`)
-									VALUES ('%1s', '%2:s', '%3:s', %4:d, %5:d)",
-										$_POST['name'], $_POST['voteurl'], $_POST['voteurlid'], intval($_POST['waittime']), $active);
+				mv_insert_site($_POST['name'], $_POST['voteurl'], $_POST['voteurlid'], $_POST['waittime'], $active);
 				echo('Insert successful!');
 			}
 		}
@@ -112,10 +99,7 @@ if (isset($_GET['action'])) {
 					$active = true;
 				}
 				
-				$mvdb->escapedQuery("INSERT INTO `".DBPRE."incentives`
-										(`name`, `amount`, `image`, `active`)
-									VALUES ('%1s', %2:d, '%3:s', %4:d)",
-										$_POST['name'], intval($_POST['amount']), $_POST['image'], $active);
+				mv_insert_incentive($_POST['name'], $_POST['amount'], $_POST['image'], $active);
 				echo('Insert successful!');
 			}
 		}
@@ -127,7 +111,7 @@ if (isset($_GET['action'])) {
 	else if ($action == 'delete') {
 		if ($type == 'sites') {
 			if (intval($_POST['id']) != 1) {
-				$mvdb->escapedQuery("DELETE FROM `".DBPRE."sites` WHERE `id` = %1:d", intval($_POST['id']));
+				mv_delete_site($_POST['id']);
 				echo('Site deleted!');
 			}
 			else {
@@ -135,7 +119,7 @@ if (isset($_GET['action'])) {
 			}
 		}
 		else if ($type == 'incentives') {
-			$mvdb->escapedQuery("DELETE FROM `".DBPRE."incentives` WHERE `id` = %1:d", intval($_POST['id']));
+			mv_delete_incentive($_POST['id']);
 			echo('Incentive deleted!');
 		}
 	}

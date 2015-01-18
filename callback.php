@@ -44,6 +44,18 @@ if (count($_GET) > 0) {
 }
 
 if (mv_setbool('log_callback')) {
+	$vid = empty($auth) ? 0 : $auth['id'];
+	$headers = array();
+
+	foreach ($_SERVER as $k => $v) {
+		if (strpos($k, 'HTTP_') !== false || strpos($k, 'CF_') !== false) {
+			$headers[$k] = $v;
+		}
+	}
+
+	mv_insert_cbdata($vid, json_encode($_GET), json_encode($_POST), json_encode($headers), json_encode($auth), $_SERVER['REMOTE_ADDR']);
+}
+/*if (mv_setbool('log_callback')) {
 	$f = 'callback.log';
 	
 	if (is_writable($f)) {
@@ -60,5 +72,5 @@ if (mv_setbool('log_callback')) {
 	else {
 		echo('Can\'t write to log file. CHMOD 0777 log file to fix.');
 	}
-}
+}*/
 ?>
