@@ -7,6 +7,32 @@
 							<table>
 								<thead>
 									<tr>
+										<th colspan="4">Common Callback IPs</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+									$uni = mv_unique_callbacks();
+									$alt = false;
+									
+									foreach ($uni as $row) {
+										?>
+										<tr <?php echo($alt ? 'class="alt"' : ''); ?>>
+											<td colspan="2"><?php echo($row['callbackip']); ?></td>
+											<td colspan="2"><?php echo($row['COUNT(*)']); ?></td>
+										</tr>
+										<?php
+										$alt = !$alt;
+									}
+									?>
+								</tbody>
+							</table>
+						</div>
+						<br />
+						<div class="datagrid" style="width: 500px; display: block; margin: 0 auto;">
+							<table>
+								<thead>
+									<tr>
 										<th colspan="4">Important Information</th>
 									</tr>
 								</thead>

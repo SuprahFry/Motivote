@@ -28,7 +28,7 @@ if (isset($_GET['ajax'])) {
 		$rewardentry = mv_reward();
 		//var_dump($rewardentry);
 		
-		if (!empty($rewardentry)) {
+		if (empty($rewardentry)) {
 			echo(mv_site_count() - count($rewardvotes));
 		}
 		else {

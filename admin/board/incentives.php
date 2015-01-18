@@ -3,6 +3,7 @@
 						if (!$mvrewardtac) {
 							echo('<div class="informationlight">Your incentive tactic is not set to "reward", so users will not be prompted for their selection.</div>');
 						}
+						
 						$results = mv_incentives_all();
 						$alt = false;
 						

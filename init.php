@@ -72,6 +72,11 @@ $prep['usite2'] = $db->prepare('UPDATE `'.DBPRE.'sites`
 											`waittime` = :wait,
 											`active` = true
 										WHERE `id` = :id');
+$prep['insreward'] = $db->prepare('INSERT INTO `'.DBPRE.'rewards`
+								(`user`, `ip`, `submitted`, `ready`, `fulfilled`, `incentive`)
+								VALUES (:name, :ip, UTC_TIMESTAMP(), false, false, null)');
+$prep['fulvote'] = $db->prepare('UPDATE `'.DBPRE.'votes` SET `fulfilled` = 1 WHERE `id` = :id');
+$prep['upreward'] = $db->prepare('UPDATE `'.DBPRE.'rewards` SET `ready` = 1, `incentive` = :incentive WHERE `id` = :id');
 
 if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
 	// people can fake the header, but it's pointless, so let's just accept it
@@ -92,6 +97,29 @@ function prep($name) {
 	// let's save some lines of code.
 	global $prep;
 	return $prep[$name];
+}
+
+function mv_unique_callbacks() {
+	global $db;
+	$r = $db->query('SELECT `callbackip`, COUNT(*) FROM `'.DBPRE.'votes` GROUP BY `callbackip` ORDER BY COUNT(*) DESC');
+	return $r->fetchAll();
+}
+
+function mv_update_reward($incentive, $id) {
+	$st = prep('upreward');
+	return $st->execute(array(':incentive' => $incentive, ':id' => $id));
+}
+
+function mv_insert_reward($name, $ip) {
+	global $db;
+	$st = prep('insreward');
+	$st->execute(array(':name' => $name, ':ip' => $ip));
+	return $db->lastInsertId();
+}
+
+function mv_fulfill_vote($id) {
+	$st = prep('fulvote');
+	return $st->execute(array(':id' => $id));
 }
 
 function mv_update_site($id, $name, $url, $urlid, $wait, $active) {
@@ -143,10 +171,15 @@ function mv_update_vote($id, $cbip, $cbdata) {
 	return $st->execute(array(':id' => $id, ':cbip' => $cbip, ':cbdata' => $cbdata));
 }
 
-function mv_insert_vote($site, $user) {
+function mv_insert_vote($site, $user, $ip = '') {
 	global $db;
+	
+	if ($ip == '') {
+		$ip = $_SERVER['REMOTE_ADDR'];
+	}
+	
 	$st = prep('insvote');
-	$st->execute(array(':site' => $site, ':user' => $user, ':ip' => $_SERVER['REMOTE_ADDR']));
+	$st->execute(array(':site' => $site, ':user' => $user, ':ip' => $ip));
 	return $db->lastInsertId();
 }
 

@@ -3,19 +3,15 @@ $rewardvotes = mv_reward_votes();
 $rewardentry = mv_reward();
 $incentives = mv_incentives();
 
-if (!empty($rewardentry)) {
+if (empty($rewardentry)) {
 	if (count($rewardvotes) >= mv_site_count()) {
 		$_SESSION['step'] = 3;
 		
-		$mvdb->escapedQuery("INSERT INTO `".DBPRE."rewards`
-								(`user`, `ip`, `submitted`, `ready`, `fulfilled`, `incentive`)
-								VALUES ('%1:s', '%2:s', UTC_TIMESTAMP(), false, false, null)",
-								$_SESSION['user'], $_SERVER['REMOTE_ADDR']);
-		$insert = $mvdb->lastInsertID();
+		$insert = mv_insert_reward($_SESSION['user'], $_SERVER['REMOTE_ADDR']);
 		
 		if ($insert > 0) {
 			foreach ($rewardvotes as $key => $value) {
-				$mvdb->escapedQuery("UPDATE `".DBPRE."votes` SET `fulfilled` = 1 WHERE `id` = %1:d", $value['id']);
+				mv_fulfill_vote($value['id']);
 			}
 		}
 		else {
@@ -31,7 +27,7 @@ else if (isset($_GET['reward'])) {
 	foreach ($incentives as $k => $incentive) {
 		if ($incentive['id'] == intval($_GET['reward'])) {
 			unset($_GET['reward']);
-			$mvdb->escapedQuery("UPDATE `".DBPRE."rewards` SET `ready` = 1, `incentive` = %1:d WHERE `id` = %2:d", $incentive['id'], $rewardentry['id']);
+			mv_update_reward($incentive['id'], $rewardentry['id']);
 			echo('<div>You\'ve been rewarded with '.number_format($incentive['amount']).' '.$incentive['name'].'</div><br />');
 			include('step2.php');
 			die();
