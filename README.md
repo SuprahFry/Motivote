@@ -1,5 +1,8 @@
 # MOTIVOTE - ULTIMATE VOTE REWARD SCRIPT #
 
+![Motivote](http://i.imgur.com/yvGrXLM.png)
+![Motivote](http://i.imgur.com/pQSpAJP.png)
+
 ### How do I get set up? ###
 
 * Download latest version of Motivote (you probably already have, since you're reading this!)
