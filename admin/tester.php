@@ -2,6 +2,11 @@
 require('../config.php');
 require('../init.php');
 
+if (!isset($_SESSION['admin']) || $_SESSION['admin'] != $mvadminpass) {
+	unset($_SESSION['admin']);
+	die('Not logged in.');
+}
+
 if ($mvrewardtac) {
 	if (empty($_POST['name']) || empty($_POST['reward']) || empty($_POST['ip'])) {
 		//var_dump($_POST);
