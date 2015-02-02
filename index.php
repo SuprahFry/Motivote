@@ -1,11 +1,4 @@
 <?php
-require('config.php');
-
-if (!isset($mvdbpass)) {
-	header('Location: install.php');
-	die();
-}
-
 require('init.php');
 $mvthemedir = 'templates/'.mv_setting('selected_theme');
 

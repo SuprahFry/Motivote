@@ -1,5 +1,4 @@
 <?php
-require('config.php');
 require('init.php');
 
 $out = null;

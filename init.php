@@ -1,116 +1,148 @@
 <?php
+session_start();
+define('BASE_DIR', str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__)));
+$mvdbhost = null;
+$mvdb = null;
+$mvdbuser = null;
+$mvdbpass = null;
+$mvconnect = false;
+$mvconfigfound = true;
+$prep = array();
+$mvsetcache = array();
+$mvphrcache = array();
+
+if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+	$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+}
+
+// REPORT ALL ERRORS
 ini_set('error_reporting', E_ALL);
 ini_set("display_errors", 1);
 error_reporting(E_ALL);
-session_start();
-define('BASE_DIR', str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__)));
-$db = new PDO('mysql:host='.$mvdbhost.';dbname='.$mvdb, $mvdbuser, $mvdbpass);
-$prep = array();
-$prep['site'] = $db->prepare('SELECT * FROM `'.DBPRE.'sites` WHERE `id` = :id');
-$prep['incentives'] = $db->prepare('SELECT * FROM `'.DBPRE.'incentives` WHERE `active` = :active');
-$prep['rewvotes'] = $db->prepare('SELECT `'.DBPRE.'votes`.`id`,
+
+if ((@include('config.php')) === false) {
+	if(!defined('MVINUM')) {
+		header('Location: '.mv_base_url().'/install/index.php');
+		die('Redirecting to install.');
+	}
+	
+	$mvconfigfound = false;
+}
+
+try {
+	if ($mvconfigfound) {
+		if (empty($mvdbhost) && !defined('MVINUM')) {
+			header('Location: '.mv_base_url().'/install/index.php');
+			die('Redirecting to install.');
+		}
+		
+		if (!empty($mvdbhost)) {
+			$db = new PDO('mysql:host='.$mvdbhost.';dbname='.$mvdb, $mvdbuser, $mvdbpass);
+			$mvconnect = $db !== false;
+		}
+	}
+}
+catch (PDOException $e) {
+	//die($e->getMessage());
+}
+
+if ($mvconnect) {
+	$prep['site'] = $db->prepare('SELECT * FROM `'.DBPRE.'sites` WHERE `id` = :id');
+	$prep['incentives'] = $db->prepare('SELECT * FROM `'.DBPRE.'incentives` WHERE `active` = :active');
+	$prep['rewvotes'] = $db->prepare('SELECT `'.DBPRE.'votes`.`id`,
+												`'.DBPRE.'votes`.`site`,
+												`'.DBPRE.'votes`.`callbackdate`
+											FROM `'.DBPRE.'votes`
+											INNER JOIN
+												(SELECT max(`id`) AS `id`, `site` FROM `'.DBPRE.'votes`
+													WHERE (`user` = :user OR `ip` = :ip)
+													GROUP BY `site` ORDER BY `callbackdate` ASC) `dest`
+											ON `dest`.`id` = `'.DBPRE.'votes`.`id`
+											WHERE `callbackdate` IS NOT NULL AND `fulfilled` = 0
+												AND (`user` = :user2 OR `ip` = :ip2)');
+	$prep['reward'] = $db->prepare('SELECT * FROM `'.DBPRE.'rewards`
+											WHERE `ready` = 0 AND (`user` = :user OR `ip` = :ip)
+											LIMIT 0, 1');
+	$prep['sitecount'] = $db->prepare('SELECT COUNT(*) FROM `'.DBPRE.'sites` WHERE `active` = :active');
+	$prep['votelast'] = $db->prepare('SELECT *, SEC_TO_TIME(TIMESTAMPDIFF(SECOND, (UTC_TIMESTAMP() - INTERVAL :waittime1 HOUR), `callbackdate`)) AS `nextvote`
+											FROM `'.DBPRE.'votes`
+											WHERE (`callbackdate` IS NULL
+													OR (`callbackdate` > UTC_TIMESTAMP() - INTERVAL :waittime2 HOUR))
+												AND `site` = :site
+												AND (`user` = :user OR `ip` = :ip)
+											ORDER BY `id` DESC LIMIT 0,1');
+	$prep['insvote'] = $db->prepare('INSERT INTO `'.DBPRE.'votes`
+											   (`id`, `site`, `user`, `ip`, `opendate`, `callbackdate`, `callbackip`, `callbackdata`, `ready`, `fulfilled`)
+										VALUES (NULL, :site, :user, :ip, UTC_TIMESTAMP(), null, \'\', \'\', 0, 0)');
+	$prep['votetimes'] = $db->prepare('SELECT `'.DBPRE.'votes`.`id`,
 											`'.DBPRE.'votes`.`site`,
-											`'.DBPRE.'votes`.`callbackdate`
+											`'.DBPRE.'sites`.`waittime`,
+											`'.DBPRE.'votes`.`callbackdate`,
+											`'.DBPRE.'votes`.`fulfilled`,
+											(`callbackdate` > UTC_TIMESTAMP() - INTERVAL `waittime` HOUR) `outoftime`
 										FROM `'.DBPRE.'votes`
 										INNER JOIN
 											(SELECT max(`id`) AS `id`, `site` FROM `'.DBPRE.'votes`
 												WHERE (`user` = :user OR `ip` = :ip)
-												GROUP BY `site` ORDER BY `callbackdate` ASC) `dest`
-										ON `dest`.`id` = `'.DBPRE.'votes`.`id`
-										WHERE `callbackdate` IS NOT NULL AND `fulfilled` = 0
-											AND (`user` = :user2 OR `ip` = :ip2)');
-$prep['reward'] = $db->prepare('SELECT * FROM `'.DBPRE.'rewards`
-										WHERE `ready` = 0 AND (`user` = :user OR `ip` = :ip)
-										LIMIT 0, 1');
-$prep['sitecount'] = $db->prepare('SELECT COUNT(*) FROM `'.DBPRE.'sites` WHERE `active` = :active');
-$prep['votelast'] = $db->prepare('SELECT *, SEC_TO_TIME(TIMESTAMPDIFF(SECOND, (UTC_TIMESTAMP() - INTERVAL :waittime1 HOUR), `callbackdate`)) AS `nextvote`
-										FROM `'.DBPRE.'votes`
-										WHERE (`callbackdate` IS NULL
-												OR (`callbackdate` > UTC_TIMESTAMP() - INTERVAL :waittime2 HOUR))
-											AND `site` = :site
-											AND (`user` = :user OR `ip` = :ip)
-										ORDER BY `id` DESC LIMIT 0,1');
-$prep['insvote'] = $db->prepare('INSERT INTO `'.DBPRE.'votes`
-										   (`id`, `site`, `user`, `ip`, `opendate`, `callbackdate`, `callbackip`, `callbackdata`, `ready`, `fulfilled`)
-									VALUES (NULL, :site, :user, :ip, UTC_TIMESTAMP(), null, \'\', \'\', 0, 0)');
-$prep['votetimes'] = $db->prepare('SELECT `'.DBPRE.'votes`.`id`,
-										`'.DBPRE.'votes`.`site`,
-										`'.DBPRE.'sites`.`waittime`,
-										`'.DBPRE.'votes`.`callbackdate`,
-										`'.DBPRE.'votes`.`fulfilled`,
-										(`callbackdate` > UTC_TIMESTAMP() - INTERVAL `waittime` HOUR) `outoftime`
-									FROM `'.DBPRE.'votes`
-									INNER JOIN
-										(SELECT max(`id`) AS `id`, `site` FROM `'.DBPRE.'votes`
-											WHERE (`user` = :user OR `ip` = :ip)
-											GROUP BY `site` ORDER BY `callbackdate` DESC) `dest`
-										ON `dest`.`id` = `'.DBPRE.'votes`.`id`
-									INNER JOIN `'.DBPRE.'sites` ON `'.DBPRE.'sites`.`id` = `'.DBPRE.'votes`.`site`
-									WHERE `callbackdate` IS NOT NULL AND ((`callbackdate` > UTC_TIMESTAMP() - INTERVAL `waittime` HOUR) OR `fulfilled` = 0) AND (`user` = :user2 OR `ip` = :ip2)');
-$prep['setting'] = $db->prepare('SELECT * FROM `'.DBPRE.'preferences` WHERE `name` = :name');
-$prep['usetting'] = $db->prepare('UPDATE `'.DBPRE.'preferences` SET `value` = :value WHERE `name` = :name');
-$prep['phrase'] = $db->prepare('SELECT * FROM `'.DBPRE.'phrases` WHERE `name` = :name');
-$prep['fireward'] = $db->prepare('UPDATE `'.DBPRE.'rewards` SET `fulfilled` = \'1\' WHERE `id` = :id');
-$prep['fivote'] = $db->prepare('UPDATE `'.DBPRE.'votes` SET `fulfilled` = \'1\' WHERE `id` = :id');
-$prep['rcvcall'] = $db->prepare('UPDATE `'.DBPRE.'votes` SET
-										`callbackdate` = UTC_TIMESTAMP(),
-										`ready` = true,
-										`callbackip` = :cbip,
-										`callbackdata` = :cbdata
-									WHERE `id` = :id AND `ready` != 1');
-$prep['uphrase'] = $db->prepare('UPDATE `'.DBPRE.'phrases` SET `value` = :value WHERE `name` = :name');
-$prep['usite'] = $db->prepare('UPDATE `'.DBPRE.'sites`
+												GROUP BY `site` ORDER BY `callbackdate` DESC) `dest`
+											ON `dest`.`id` = `'.DBPRE.'votes`.`id`
+										INNER JOIN `'.DBPRE.'sites` ON `'.DBPRE.'sites`.`id` = `'.DBPRE.'votes`.`site`
+										WHERE `callbackdate` IS NOT NULL AND ((`callbackdate` > UTC_TIMESTAMP() - INTERVAL `waittime` HOUR) OR `fulfilled` = 0) AND (`user` = :user2 OR `ip` = :ip2)');
+	$prep['setting'] = $db->prepare('SELECT * FROM `'.DBPRE.'preferences` WHERE `name` = :name');
+	$prep['usetting'] = $db->prepare('UPDATE `'.DBPRE.'preferences` SET `value` = :value WHERE `name` = :name');
+	$prep['phrase'] = $db->prepare('SELECT * FROM `'.DBPRE.'phrases` WHERE `name` = :name');
+	$prep['fireward'] = $db->prepare('UPDATE `'.DBPRE.'rewards` SET `fulfilled` = \'1\' WHERE `id` = :id');
+	$prep['fivote'] = $db->prepare('UPDATE `'.DBPRE.'votes` SET `fulfilled` = \'1\' WHERE `id` = :id');
+	$prep['rcvcall'] = $db->prepare('UPDATE `'.DBPRE.'votes` SET
+											`callbackdate` = UTC_TIMESTAMP(),
+											`ready` = true,
+											`callbackip` = :cbip,
+											`callbackdata` = :cbdata
+										WHERE `id` = :id AND `ready` != 1');
+	$prep['uphrase'] = $db->prepare('UPDATE `'.DBPRE.'phrases` SET `value` = :value WHERE `name` = :name');
+	$prep['usite'] = $db->prepare('UPDATE `'.DBPRE.'sites`
+											SET `name` = :name,
+												`voteurl` = :url,
+												`voteurlid` = :urlid,
+												`waittime` = :wait,
+												`active` = :active
+											WHERE `id` = :id');
+	$prep['usite2'] = $db->prepare('UPDATE `'.DBPRE.'sites`
+											SET `voteurl` = :url,
+												`voteurlid` = :urlid,
+												`waittime` = :wait,
+												`active` = true
+											WHERE `id` = :id');
+	$prep['insreward'] = $db->prepare('INSERT INTO `'.DBPRE.'rewards`
+									(`user`, `ip`, `submitted`, `ready`, `fulfilled`, `incentive`)
+									VALUES (:name, :ip, UTC_TIMESTAMP(), false, false, null)');
+	$prep['fulvote'] = $db->prepare('UPDATE `'.DBPRE.'votes` SET `fulfilled` = 1 WHERE `id` = :id');
+	$prep['upreward'] = $db->prepare('UPDATE `'.DBPRE.'rewards` SET `ready` = 1, `incentive` = :incentive WHERE `id` = :id');
+	$prep['updinc'] = $db->prepare('UPDATE `'.DBPRE.'incentives`
 										SET `name` = :name,
-											`voteurl` = :url,
-											`voteurlid` = :urlid,
-											`waittime` = :wait,
+											`amount` = :amount,
+											`image` = :image,
 											`active` = :active
 										WHERE `id` = :id');
-$prep['usite2'] = $db->prepare('UPDATE `'.DBPRE.'sites`
-										SET `voteurl` = :url,
-											`voteurlid` = :urlid,
-											`waittime` = :wait,
-											`active` = true
-										WHERE `id` = :id');
-$prep['insreward'] = $db->prepare('INSERT INTO `'.DBPRE.'rewards`
-								(`user`, `ip`, `submitted`, `ready`, `fulfilled`, `incentive`)
-								VALUES (:name, :ip, UTC_TIMESTAMP(), false, false, null)');
-$prep['fulvote'] = $db->prepare('UPDATE `'.DBPRE.'votes` SET `fulfilled` = 1 WHERE `id` = :id');
-$prep['upreward'] = $db->prepare('UPDATE `'.DBPRE.'rewards` SET `ready` = 1, `incentive` = :incentive WHERE `id` = :id');
-$prep['updinc'] = $db->prepare('UPDATE `'.DBPRE.'incentives`
-									SET `name` = :name,
-										`amount` = :amount,
-										`image` = :image,
-										`active` = :active
-									WHERE `id` = :id');
-$prep['inssite'] = $db->prepare('INSERT INTO `'.DBPRE.'sites`
-										(`name`, `voteurl`, `voteurlid`, `waittime`, `active`)
-									VALUES (:name, :voteurl, :voteurlid, :waittime, :active)');
-$prep['insinc'] = $db->prepare('INSERT INTO `'.DBPRE.'incentives`
-										(`name`, `amount`, `image`, `active`)
-									VALUES (:name, :amount, :image, :active)');
-$prep['delsite'] = $db->prepare('DELETE FROM `'.DBPRE.'sites` WHERE `id` = :id');
-$prep['delinc'] = $db->prepare('DELETE FROM `'.DBPRE.'incentives` WHERE `id` = :id');
-$prep['inscaldata'] = $db->prepare('INSERT INTO `'.DBPRE.'callbacks`
-											(`id`, `voteid`, `getdata`, `postdata`,
-												`headers`, `auth`, `ip`, `date`)
-									VALUES (null, :voteid, :getdata, :postdata,
-												:headers, :auth, :ip, CURRENT_TIMESTAMP)');
+	$prep['inssite'] = $db->prepare('INSERT INTO `'.DBPRE.'sites`
+											(`name`, `voteurl`, `voteurlid`, `waittime`, `active`)
+										VALUES (:name, :voteurl, :voteurlid, :waittime, :active)');
+	$prep['insinc'] = $db->prepare('INSERT INTO `'.DBPRE.'incentives`
+											(`name`, `amount`, `image`, `active`)
+										VALUES (:name, :amount, :image, :active)');
+	$prep['delsite'] = $db->prepare('DELETE FROM `'.DBPRE.'sites` WHERE `id` = :id');
+	$prep['delinc'] = $db->prepare('DELETE FROM `'.DBPRE.'incentives` WHERE `id` = :id');
+	$prep['inscaldata'] = $db->prepare('INSERT INTO `'.DBPRE.'callbacks`
+												(`id`, `voteid`, `getdata`, `postdata`,
+													`headers`, `auth`, `ip`, `date`)
+										VALUES (null, :voteid, :getdata, :postdata,
+													:headers, :auth, :ip, CURRENT_TIMESTAMP)');
 
-if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-	// people can fake the header, but it's pointless, so let's just accept it
-	$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+	define('MVERNUM', mv_setting('version'));
+	$mvsecurityhash = mv_setting('security_hash');
+	$mvadminpass = mv_setting('admin_pass');
+	$mvrewardtac = mv_setting('incentive_tactic') == 'reward';
 }
-
-/*require('class-dbi.php');
-$mvdb = new Database($mvdbuser, $mvdbpass, $mvdbhost, $mvdb);*/
-$mvsetcache = array();
-$mvphrcache = array();
-
-define('MVERNUM', mv_setting('version'));
-$mvsecurityhash = mv_setting('security_hash');
-$mvadminpass = mv_setting('admin_pass');
-$mvrewardtac = mv_setting('incentive_tactic') == 'reward';
 
 function prep($name) {
 	// let's save some lines of code.
@@ -200,7 +232,13 @@ function mv_incentive_array($string) {
 }
 
 function mv_base_url() {
-	return 'http://'.$_SERVER['HTTP_HOST'].BASE_DIR;
+	/*$scheme = 'http';
+	
+	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
+		$scheme = 'https';
+	}*/
+	
+	return '//'.$_SERVER['HTTP_HOST'].BASE_DIR;
 }
 
 function mv_callback_url() {

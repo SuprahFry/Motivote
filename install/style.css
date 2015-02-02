@@ -1,0 +1,143 @@
+html, body {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-size: 12px;
+	font-family: 'Source Sans Pro', sans-serif;
+	background-color: #ecece3;
+}
+
+#outercontainer {
+	width: 900px;
+	margin: 0 auto;
+	margin-top: 50px;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#container {
+	background-color: #0a53a7;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+#sethead {
+	padding: 10px;
+	position: relative;
+	background: -moz-linear-gradient(top,  rgba(242,246,248,0.4) 0%, rgba(241,246,248,0.4) 1%, rgba(216,225,231,0.4) 50%, rgba(181,198,208,0.4) 51%, rgba(224,239,249,0.4) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(242,246,248,0.4)), color-stop(1%,rgba(241,246,248,0.4)), color-stop(50%,rgba(216,225,231,0.4)), color-stop(51%,rgba(181,198,208,0.4)), color-stop(100%,rgba(224,239,249,0.4))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(242,246,248,0.4) 0%,rgba(241,246,248,0.4) 1%,rgba(216,225,231,0.4) 50%,rgba(181,198,208,0.4) 51%,rgba(224,239,249,0.4) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(242,246,248,0.4) 0%,rgba(241,246,248,0.4) 1%,rgba(216,225,231,0.4) 50%,rgba(181,198,208,0.4) 51%,rgba(224,239,249,0.4) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(242,246,248,0.4) 0%,rgba(241,246,248,0.4) 1%,rgba(216,225,231,0.4) 50%,rgba(181,198,208,0.4) 51%,rgba(224,239,249,0.4) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(242,246,248,0.4) 0%,rgba(241,246,248,0.4) 1%,rgba(216,225,231,0.4) 50%,rgba(181,198,208,0.4) 51%,rgba(224,239,249,0.4) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66f2f6f8', endColorstr='#66e0eff9',GradientType=0 ); /* IE6-9 */
+}
+
+#setheadtext {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	color: #ffffff;
+	font-size: 1.2em;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 1);
+}
+
+#content {
+	background-color: rgba(255, 255, 255, 0.5);
+	padding: 10px;
+}
+
+#footer {
+	text-align: center;
+}
+
+#area {
+	float: right;
+	width: 700px
+}
+
+input, select, option {
+	font-size: 100%;
+	font-family: inherit;
+}
+
+#area input[type="text"] {
+	border: 1px solid #999999;
+	padding: 2px 3px;
+	width: 200px;
+}
+
+h2 {
+	font-size: 100%;
+}
+
+.testres {
+	width: 100%;
+}
+
+.testres tr {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.testres tr td {
+	
+}
+
+.sucicon {
+	width: 18px;
+}
+
+.sucicon img {
+	vertical-align: middle;
+}
+
+.testitle {
+	width: 200px;
+}
+
+.pass {
+	color: green;
+}
+
+.fail {
+	color: red;
+}
+
+#navi {
+	margin-top: 5px;
+	/*text-align: right;*/
+}
+
+#navi input {
+	padding: 1px 10px;
+}
+
+#steps {
+	list-style: none;
+	float: left;
+	padding: 0;
+	margin: 0;
+	border-right: 1px solid rgba(0, 0, 0, 0.2);
+	display: inline-block;
+	padding-right: 40px;
+}
+
+#steps li {
+	line-height: 24px;
+	padding-left: 20px;
+}
+
+.completed {
+	background: url('check_box.png') no-repeat 0 4px;
+}
+
+.current {
+	background: url('check_box_mix.png') no-repeat 0 4px;
+}
+
+.next {
+	background: url('check_box_uncheck.png') no-repeat 0 4px;
+}
