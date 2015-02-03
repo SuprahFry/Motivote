@@ -4,8 +4,8 @@ if (!empty($_POST['server_name']) && !empty($_POST['incentive_tactic'])
 	mv_update_setting('server_name', $_POST['server_name']);
 	mv_update_setting('incentive_tactic', $_POST['incentive_tactic']);
 	mv_update_setting('admin_pass', $_POST['admin_pass']);
-	mv_update_setting('security_hash', substr(md5(rand()), 0, 8)));
-	mv_update_setting('datakey', substr(md5(rand()), 0, 8)));
+	mv_update_setting('security_hash', substr(md5(rand()), 0, 8));
+	mv_update_setting('datakey', substr(md5(rand()), 0, 8));
 	$_SESSION['admin'] = $_POST['admin_pass'];
 }
 else if (isset($_POST['s'])) {
