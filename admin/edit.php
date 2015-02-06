@@ -10,6 +10,10 @@ if (isset($_GET['action'])) {
 	$action = $_GET['action'];
 	$type = $_GET['target'];
 	
+	if (NoCSRF::check('stoken', $_GET, false) === false) {
+		die('No CSRF');
+	}
+	
 	if ($action == 'update') {
 		if ($type == 'settings') {
 			//var_dump($_POST);
@@ -32,7 +36,7 @@ if (isset($_GET['action'])) {
 		}
 		else if ($type == 'phrases') {
 			mv_update_phrase($_GET['name'], $_GET['value']);
-			echo('Update successful!');
+			echo(NoCSRF::generate('stoken'));
 		}
 		else if ($type == 'sites') {
 			$active = false;

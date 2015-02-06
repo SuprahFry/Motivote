@@ -1,7 +1,7 @@
 					<div id="content">
 						<div class="informationlight">When creating themes, or customizing the default theme, please clone the original theme into a new, uniquely named directory to avoid being overridden when you update Motivote.</div>
 						<div class="datagrid" style="max-width: 500px; display: inline-block;">
-							<form action="edit.php?action=update&target=settings" method="get">
+							<form action="edit.php?action=update&target=settings&stoken=<?php echo(NoCSRF::generate('stoken')); ?>" method="get">
 								<table>
 									<thead>
 										<tr>
@@ -51,7 +51,7 @@
 								data: f.serialize(),
 								success: function(data)
 								{
-									//alert(data);
+									alert(data);
 									animateLoadPage(currentURL);
 								}
 							});

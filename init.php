@@ -1,4 +1,5 @@
 <?php
+require('nocsrf.php');
 session_start();
 define('BASE_DIR', str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__)));
 $mvdbhost = null;
@@ -39,6 +40,11 @@ try {
 		if (!empty($mvdbhost)) {
 			$db = new PDO('mysql:host='.$mvdbhost.';dbname='.$mvdb, $mvdbuser, $mvdbpass);
 			$mvconnect = $db !== false;
+		}
+		
+		if (!$mvconnect && !defined('MVINUM')) {
+			header('Location: '.mv_base_url().'/install/index.php');
+			die('Redirecting to install.');
 		}
 	}
 }
@@ -137,11 +143,17 @@ if ($mvconnect) {
 													`headers`, `auth`, `ip`, `date`)
 										VALUES (null, :voteid, :getdata, :postdata,
 													:headers, :auth, :ip, CURRENT_TIMESTAMP)');
-
+	
 	define('MVERNUM', mv_setting('version'));
 	$mvsecurityhash = mv_setting('security_hash');
 	$mvadminpass = mv_setting('admin_pass');
 	$mvrewardtac = mv_setting('incentive_tactic') == 'reward';
+	
+	$m = MVERNUM;
+	if (empty($m) && !defined('MVINUM')) {
+		header('Location: '.mv_base_url().'/install/index.php');
+		die('Redirecting to install.');
+	}
 }
 
 function prep($name) {

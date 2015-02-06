@@ -19,7 +19,7 @@ if (isset($_GET['board'])) {
 	}*/
 }
 
-if (!isset($_SESSION['admin']) || $_SESSION['admin'] != $mvadminpass || (isset($_GET['do']) && $_GET['do'] == 'logout')) {
+if (!isset($_SESSION['admin']) || $_SESSION['admin'] != $mvadminpass || (isset($_GET['do']) && $_GET['do'] == 'logout') || $_SESSION['ip'] != $_SERVER['REMOTE_ADDR']) {
 	unset($_SESSION['admin']);
 	setcookie('loginflow', '', 0);
 	

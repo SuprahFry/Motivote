@@ -4,6 +4,7 @@ require('../init.php');
 if (isset($_POST['password'])) {
 	if (md5($_POST['password']) == $mvadminpass) {
 		$_SESSION['admin'] = $mvadminpass;
+		$_SESSION['ip'] = $_SERVER['REMOTE_ADDR'];
 		header('Location: index.php');
 		die();
 	}

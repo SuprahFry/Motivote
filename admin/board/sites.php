@@ -2,11 +2,12 @@
 						<?php
 						$results = mv_sites();
 						$alt = false;
+						$token = NoCSRF::generate('stoken');
 						
 						foreach ($results as $result) {
 						?>
 						<div class="datagrid" style="max-width: 500px; display: inline-block;">
-							<form action="edit.php?action=update&target=sites" method="post">
+							<form action="edit.php?action=update&target=sites&stoken=<?php echo($token); ?>" method="post">
 								<table>
 									<thead>
 										<tr>
@@ -59,7 +60,7 @@
 						}
 						?>
 						<div class="datagrid" style="max-width: 500px; display: inline-block;">
-							<form action="edit.php?action=create&target=sites" method="post">
+							<form action="edit.php?action=create&target=sites&stoken=<?php echo($token); ?>" method="post">
 								<table>
 									<thead>
 										<tr>

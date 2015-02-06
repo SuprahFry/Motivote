@@ -1,6 +1,10 @@
 					<div id="content">
 						<form action="tester.php" method="post">
 							<?php
+							$token = NoCSRF::generate('stoken');
+							?>
+							<input type="hidden" name="stoken" value="<?php echo($token); ?>" />
+							<?php
 							if (!$mvrewardtac) {
 								// per vote
 								?>

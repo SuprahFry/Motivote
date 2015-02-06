@@ -1,6 +1,6 @@
 					<div id="content">
 						<div class="datagrid">
-							<form action="edit.php?action=update&target=settings" id="settings" name="settings" method="post">
+							<form action="edit.php?action=update&target=settings&stoken=<?php echo(NoCSRF::generate('stoken')); ?>" id="settings" name="settings" method="post">
 							<table>
 								<thead>
 									<tr>

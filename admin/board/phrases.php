@@ -38,6 +38,10 @@
 						</div>
 					</div>
 					<script type="text/javascript">
+						<?php
+						$token = NoCSRF::generate('stoken');
+						?>
+						var token = '<?php echo($token); ?>';
 						var dbcl = function() {
 							$(this).off();
 							$(this).html('<input type="text" value="' + $(this).text() + '" />');
@@ -48,11 +52,12 @@
 								$(this).off();
 								
 								$.ajax({
-									url: "edit.php?action=update&target=phrases&name=" + n + "&value=" + v,
+									url: "edit.php?action=update&target=phrases&stoken=" + token + "&name=" + n + "&value=" + v,
 									cache: false
 								})
 								.done(function(html) {
-									alert(html);
+									//alert(html);
+									token = html;
 								});
 							});
 						}
