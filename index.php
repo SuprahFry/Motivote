@@ -29,7 +29,7 @@ if (isset($_GET['ajax'])) {
 		}
 	}
 	else if ($path !== false) {
-		include($path) or die('Invalid AJAX request.');
+		include($path);
 		/*if (strpos($path, $mvthemedir.'/') !== false) {
 			require($path);
 		}
