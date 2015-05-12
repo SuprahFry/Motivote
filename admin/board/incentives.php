@@ -6,13 +6,11 @@
 						
 						$results = mv_incentives_all();
 						$alt = false;
+						$token = NoCSRF::generate('stoken');
 						
 						foreach ($results as $result) {
 						?>
 						<div class="datagrid" style="max-width: 500px; display: inline-block;">
-							<?php
-							$token = NoCSRF::generate('stoken');
-							?>
 							<form action="edit.php?action=update&target=incentives&stoken=<?php echo($token); ?>" method="post">
 								<table>
 									<thead>
@@ -65,7 +63,7 @@
 						}
 						?>
 						<div class="datagrid" style="max-width: 500px; display: inline-block;">
-							<form action="edit.php?action=create&target=incentives" method="post">
+							<form action="edit.php?action=create&target=incentives&stoken=<?php echo($token); ?>" method="post">
 								<table>
 									<thead>
 										<tr>
