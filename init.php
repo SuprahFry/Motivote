@@ -12,8 +12,27 @@ $prep = array();
 $mvsetcache = array();
 $mvphrcache = array();
 
+$cfipv4 = array('103.21.244.0/22',
+				'103.22.200.0/22',
+				'103.31.4.0/22',
+				'104.16.0.0/12',
+				'108.162.192.0/18',
+				'141.101.64.0/18',
+				'162.158.0.0/15',
+				'172.64.0.0/13',
+				'173.245.48.0/20',
+				'188.114.96.0/20',
+				'190.93.240.0/20',
+				'197.234.240.0/22',
+				'198.41.128.0/17',
+				'199.27.128.0/21');
+
 if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-	$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+	foreach ($cfipv4 as $v) {
+		if (cidr_match($_SERVER['HTTP_CF_CONNECTING_IP'], $v)) {
+			$_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+		}
+	}
 }
 
 // REPORT ALL ERRORS
@@ -154,6 +173,16 @@ if ($mvconnect) {
 		header('Location: '.mv_base_url().'/install/index.php');
 		die('Redirecting to install.');
 	}
+}
+
+function cidr_match($ip, $cidr) {
+    list($subnet, $mask) = explode('/', $cidr);
+
+    if ((ip2long($ip) & ~((1 << (32 - $mask)) - 1) ) == ip2long($subnet)) { 
+        return true;
+    }
+
+    return false;
 }
 
 function prep($name) {
