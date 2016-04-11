@@ -1,5 +1,5 @@
 <?php
-define('MVINUM', 1.3);
+define('MVINUM', 1.4);
 include('../init.php');
 
 $requirements = array(
