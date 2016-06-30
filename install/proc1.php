@@ -26,11 +26,11 @@ if (!$failedstep) {
 	$curstep = $_SESSION['instep'] = $curstep + 1; // increment and set session
 	
 	$installcode = '<?php
-define(\'DBPRE\', \''.$_POST['dbpre'].'\');
-$mvdbuser = \''.$_POST['mvdbuser'].'\';
-$mvdbpass = \''.$_POST['mvdbpass'].'\';
-$mvdb = \''.$_POST['mvdb'].'\';
-$mvdbhost = \''.$_POST['mvdbhost'].'\';
+define(\'DBPRE\', \''.htmlspecialchars($_POST['dbpre']).'\');
+$mvdbuser = \''.htmlspecialchars($_POST['mvdbuser']).'\';
+$mvdbpass = \''.htmlspecialchars($_POST['mvdbpass']).'\';
+$mvdb = \''.htmlspecialchars($_POST['mvdb']).'\';
+$mvdbhost = \''.htmlspecialchars($_POST['mvdbhost']).'\';
 ?>';
 	$fp = fopen('../config.php', 'wb');
 	fwrite($fp, $installcode);
