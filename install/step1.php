@@ -1,7 +1,7 @@
 <?php
 $failedstep = true;
 ?>
-<p>Tell the installer the settings for your database. You have to set these up in your hosting control panel (ex: cPanel) before entering them here.</p>
+<p>Tell the installer the settings for your database. You have to set these up in your hosting control panel (ex: cPanel) before entering them here. Please ensure your details do not contain any of the following characters: &amp; &quot; &#039; &lt; &gt;</p>
 <table class="testres">
 	<tr>
 		<td>Database Host</td>
