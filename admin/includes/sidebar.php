@@ -5,10 +5,7 @@
 								<a class="home" href="#dashboard">Dashboard</a>
 							</li>
 							<li>
-								<a class="tool" href="#settings">Settings</a>
-							</li>
-							<li>
-								<a class="gear" href="#themes">Themes</a>
+								<a class="tool" href="#settings">Settings and Themes</a>
 							</li>
 							<li>
 								<a class="bar" href="#sites">Sites</a>
