@@ -27,6 +27,19 @@
 											if ($setting['values'] == 's') {
 												echo('<input type="text" name="'.$setting['name'].'" value="'.$setting['value'].'" />');
 											}
+                      else if ($setting['values'] == 'theme'){
+                        $files = glob("../templates/*", GLOB_BRACE);
+												//print_r($files);
+												echo('<select name="'.$setting['name'].'">');
+												foreach ($files as $file) {
+													$f = pathinfo($file, PATHINFO_BASENAME);
+
+													if ($f != 'index.html') {
+														echo('<option value="'.$f.'" '.(mv_setting('selected_theme') == $f ? 'selected' : '').'>'.$f.'</option>');
+													}
+												}
+
+                      }
 											else if ($setting['values'] == 'md5') {
 												echo('<input type="text" placeholder="Leave blank unless changing" name="'.$setting['name'].'" />');
 											}
