@@ -1,0 +1,186 @@
+#wrapper {
+	position: relative;
+	height: 100%;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#wrapper:before {
+	content: '';
+	display: inline-block;
+	height: 100%; 
+	vertical-align: middle;
+	margin-right: -0.25em;
+}
+
+#content {
+	margin: 0 auto;
+	max-width: 600px;
+	width: 100%;
+	text-align: left;
+	position: relative;
+	padding: 20px;
+	-webkit-transition: height 1s; /* For Safari 3.1 to 6.0 */
+    transition: height 1s;
+	height: auto;
+	display: inline-block;
+	vertical-align: middle;
+
+}
+
+#content #loadimg {
+	float: right;
+	position: absolute;
+	top: 0;
+	right: 183px;
+	margin-top: 28px;
+}
+
+#content h1 {
+	font: bold 32px Helvetica, Arial, sans-serif;
+	letter-spacing: -1px;
+	padding-bottom: 15px;
+	color: #242c3e;
+	text-shadow: 1px 1px 1px #ffffff;
+	display: inline-block;
+}
+
+#content #step {
+	float: right;
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	margin-top: 7px;
+	border: 1px solid #bbb;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-ms-border-radius: 3px;
+	-webkit-box-shadow:  1px 1px 0px #fff;
+	-moz-box-shadow:     1px 1px 0px #fff;
+	box-shadow:          1px 1px 0px #fff;
+}
+
+#content #step #stepnum {
+	padding: 2px 7px;
+	display: inline-block;
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+#content #step #stepname {
+	padding: 2px 10px;
+	border-left: 1px solid #bbb;
+	display: inline-block;
+}
+
+#content #main {
+	
+}
+
+#content #main .warning {
+	color: #de0000;
+	font-weight: bold;
+	text-align: center;
+	margin: 0 auto;
+}
+
+#content #links {
+	text-align: center;
+	margin: 20px auto;
+	margin-bottom: 0px;
+}
+
+
+
+#content #links .incentive {
+	text-align: center;
+	line-height: 33px;
+}
+
+#content #links .incentive img {
+	vertical-align: middle;
+}
+
+#content #links ul {
+	line-height: 35px;
+	list-style: none;
+	width: 100%;
+	display: inline-block;
+}
+
+#content #links ul li {
+	display: inline-block;
+}
+
+#content #links #input {
+	text-align: center;
+	width: 175px;
+	margin: 0 auto;
+}
+
+#content #links #input input {
+	padding: 3px 5px;
+	text-align: center;
+}
+
+#content #foot {
+	text-align: center;
+}
+
+
+
+#rights {
+	text-align: center;
+	position: absolute;
+	bottom: 4px;
+	left: 0;
+	width: 100%;
+	text-transform: uppercase;
+	font-size: 10px;
+	color: rgba(255, 255, 255, 1);
+	font-weight: bold;
+	text-shadow: 0 0 3px rgba(0, 0, 0, 1);
+}
+
+@media all and (max-width: 644px) {
+	#wrapper:before {
+		height: 0px;
+		content:none;
+	}
+	
+	#content {
+		width: auto;
+		max-width: none;
+	}
+}
+
+@media all and (orientation: portrait) and (max-width: 644px) {
+	#content h1 {
+		padding-bottom: 0;
+	}
+	
+	#content #loadimg {
+		right: 20px;
+	}
+	
+	#content #step {
+		float: none;
+		margin-bottom: 10px;
+		position: static !important;
+	}
+	
+	#content #stepnum {
+		float: left !important;
+	}
+	
+	#content #stepname {
+		text-align: center;
+		display: block !important;
+		width: 100%;
+		padding: 2px 0 !important;
+	}
+	
+	#content #links ul {
+		width: 100%;
+	}
+}
