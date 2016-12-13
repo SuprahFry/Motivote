@@ -19,9 +19,4 @@ Run this query, make sure to edit '!!yournewpass!!' to the password you want. Yo
 
 	UPDATE `mv_preferences` SET `value` = MD5('!!yournewpass!!') WHERE `name` = 'admin_pass';
 
-### What if something goes wrong? ###
-
-* Contact zomgtehfly on Skype and I'll be glad to try and get you up and running.
-* Please report all bugs you may find to me ASAP so I can fix them.
-
-http://rspserver.com/motivote
+http://motivoters.com/
