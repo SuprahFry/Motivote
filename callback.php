@@ -3,19 +3,13 @@ require('init.php');
 $auth = false;
 $data = '';
 
-if (count($_GET) > 0) {
+$postdata = $_POST ?: $_GET;
+
+if (count($postdata) > 0) {
 	// scan get and post variables for our incentive string
-	foreach ($_GET as $key => $value) {
+	foreach ($postdata as $key => $value) {
 		$auth = mv_incentive_array($value);
-		
-		if (is_array($auth)) {
-			break;
-		}
-	}
-	
-	foreach ($_POST as $key => $value) {
-		$auth = mv_incentive_array($value);
-		
+
 		if (is_array($auth)) {
 			break;
 		}
